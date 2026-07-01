@@ -42,12 +42,28 @@ class LocalDB {
         return this.data[key] ?? 0;
     }
 
+    getArray(key) {
+        return this.data[key] ?? [];
+    }
+
     getAll() {
         return { ...this.data };
     }
 
     set(key, value) {
         this.data[key] = value;
+        this._save();
+    }
+
+    push(key, value) {
+        if (!Array.isArray(this.data[key])) this.data[key] = [];
+        this.data[key].push(value);
+        this._save();
+    }
+
+    remove(key, predicate) {
+        if (!Array.isArray(this.data[key])) return;
+        this.data[key] = this.data[key].filter(item => !predicate(item));
         this._save();
     }
 }

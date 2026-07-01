@@ -4,11 +4,13 @@ const {
     ButtonStyle,
     ContainerBuilder,
     EmbedBuilder,
+    MediaGalleryBuilder,
     MessageFlags,
     SectionBuilder,
     SeparatorBuilder,
     SeparatorSpacingSize,
     TextDisplayBuilder,
+    ThumbnailBuilder,
 } = require('discord.js');
 
 // Must be sent on every message that contains Components v2 components.
@@ -73,12 +75,16 @@ function createTextDisplay(content) {
  * @param {TextDisplayBuilder|TextDisplayBuilder[]} textDisplays
  * @param {ButtonBuilder} [buttonAccessory]
  */
-function createSection(textDisplays, buttonAccessory = null) {
+function createSection(textDisplays, accessory = null) {
     const displays = Array.isArray(textDisplays) ? textDisplays : [textDisplays];
     const section = new SectionBuilder().addTextDisplayComponents(...displays);
 
-    if (buttonAccessory) {
-        section.setButtonAccessory(buttonAccessory);
+    if (accessory) {
+        if (accessory instanceof ButtonBuilder) {
+            section.setButtonAccessory(accessory);
+        } else if (accessory instanceof ThumbnailBuilder) {
+            section.setThumbnailAccessory(accessory);
+        }
     }
 
     return section;
@@ -90,9 +96,24 @@ function createSection(textDisplays, buttonAccessory = null) {
  * @param {Array} components
  * @param {number|null} [accentColor]
  */
-function createContainer(textDisplays, accentColor = null) {
-    const displays = Array.isArray(textDisplays) ? textDisplays : [textDisplays];
-    const container = new ContainerBuilder().addTextDisplayComponents(...displays);
+function createContainer(items, accentColor = null) {
+    const itemsArray = Array.isArray(items) ? items : [items];
+    const container = new ContainerBuilder();
+
+    for (const item of itemsArray) {
+        if (item instanceof ActionRowBuilder) {
+            container.addActionRowComponents(item);
+        } else if (item instanceof MediaGalleryBuilder) {
+            container.addMediaGalleryComponents(item);
+        } else if (item instanceof SectionBuilder) {
+            container.addSectionComponents(item);
+        } else if (item instanceof TextDisplayBuilder) {
+            container.addTextDisplayComponents(item);
+        } else if (item instanceof SeparatorBuilder) {
+            container.addSeparatorComponents(item);
+        }
+    }
+
     if (accentColor !== null) {
         container.setAccentColor(accentColor);
     }

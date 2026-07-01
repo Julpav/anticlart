@@ -122,6 +122,13 @@ class ScamDetection {
 
             this.totalBans += 1;
             db.increment('bansIssued');
+            db.push('bans', {
+                userId: author.id,
+                userTag: author.tag,
+                guildId: guild.id,
+                bannedAt: Date.now(),
+                content: message.content,
+            });
             this.untrackUser(author.id);
 
             console.log(
