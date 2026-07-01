@@ -1,6 +1,14 @@
 {
-  "commandsRun": 15,
-  "messagesDeleted": 2,
-  "bansIssued": 2,
-  "bans": []
+  "commandsRun": 18,
+  "messagesDeleted": 4,
+  "bansIssued": 4,
+  "bans": [
+    {
+      "userId": "732849852291219478",
+      "userTag": "metaonline",
+      "guildId": "1314523068529643591",
+      "bannedAt": 1782876418493,
+      "content": ""
+    }
+  ]
 }

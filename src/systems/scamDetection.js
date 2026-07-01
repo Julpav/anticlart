@@ -135,7 +135,7 @@ class ScamDetection {
                 `[ScamDetection] Banned user ${author.tag} (${author.id}) for scam image spam.`
             );
 
-            await this.logAction(guild, author, userData, message.content);
+            await this.logAction(guild, author);
         } catch (error) {
             console.error(
                 `[ScamDetection] Failed to ban user ${author.tag} (${author.id}):`,
@@ -175,18 +175,18 @@ class ScamDetection {
      * @param {import('discord.js').User} user
      * @param {*} userData
      */
-    async logAction(guild, user, userData, content) {
+    async logAction(guild, user) {
         if (!config.logChannelId) return;
 
         const logChannel = guild.client.channels.cache.get(config.logChannelId);
         if (!logChannel || !logChannel.isTextBased()) return;
 
-        const { createErrorEmbed } = require('../utils/components');
+        const { EmbedBuilder } = require('discord.js');
 
-        const embed = createErrorEmbed(
-            '🚫 User Banned - Scam Image Spam',
-            `**User ID:** ${user.id}\n**Message:** ${content}`
-        );
+        const embed = new EmbedBuilder()
+            .setTitle('🚫 User Banned')
+            .setDescription(`<@${user.id}> was banned for image spam.`)
+            .setTimestamp();
 
         await logChannel.send({ embeds: [embed] }).catch((err) => {
             console.error('[ScamDetection] Failed to send log message:', err);
